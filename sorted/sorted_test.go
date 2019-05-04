@@ -73,7 +73,7 @@ func TestStringSet_AddRandom(t *testing.T) {
 	for i := 0; i < 5; i += 1 {
 		xs := NewStringList()
 		for i := 0; i < 20; i += 1 {
-			xs.Add(strconv.Itoa(rand.Int()))
+			xs.Insert(strconv.Itoa(rand.Int()))
 		}
 		if !isOk(xs.Slice()) {
 			t.Errorf("incorrectly sorted")

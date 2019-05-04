@@ -19,9 +19,9 @@ type StringSet interface {
 }
 
 type StringList interface {
-	Add(string) StringSet
+	Insert(string) StringList
 	Has(string) bool
-	Remove(string) StringSet
+	Delete(string) StringList
 	Size() int
 	Get(int) string
 
@@ -31,7 +31,10 @@ type StringList interface {
 	Slice() []string
 }
 
-// Implementation of a sorted set
+// A simple implementation of a strings list with low overhead.
+//
+// Also implements the set through an extra flag.
+// Performs all operations in O(log n).
 type stringList struct {
 	data []string
 	noDuplicates bool
@@ -45,7 +48,7 @@ func NewStringList() StringList {
 	return &stringList{make([]string, 0, 10), false}
 }
 
-func (ss *stringList) Add(s string) StringSet {
+func (ss *stringList) add(s string) interface{} {
 	if len(ss.data) == 0 {
 		ss.data = append(ss.data, s)
 		return ss
@@ -89,7 +92,7 @@ func (ss *stringList) Has(s string) bool{
 	return false
 }
 
-func (ss *stringList) Remove(s string) StringSet {
+func (ss *stringList) remove(s string) interface{} {
 	if len(ss.data) == 0 {
 		return ss
 	}
@@ -122,10 +125,6 @@ func (ss *stringList) Slice() []string {
 	return dst
 }
 
-func (ss *stringList) String() string {
-	return fmt.Sprintf("{%v}", strings.Join(ss.data, ","))
-}
-
 func (ss *stringList) Get(i int) string {
 	if i < 0 {
 		panic("index < 0")
@@ -135,4 +134,24 @@ func (ss *stringList) Get(i int) string {
 	}
 
 	return ss.data[i]
+}
+
+func (ss *stringList) String() string {
+	return fmt.Sprintf("{%v}", strings.Join(ss.data, ","))
+}
+
+func (ss *stringList) Insert(s string) StringList {
+	return ss.add(s).(StringList)
+}
+
+func (ss *stringList) Delete(s string) StringList {
+	return ss.remove(s).(StringList)
+}
+
+func (ss *stringList) Add(s string) StringSet {
+	return ss.add(s).(StringSet)
+}
+
+func (ss *stringList) Remove(s string) StringSet {
+	return ss.remove(s).(StringSet)
 }
