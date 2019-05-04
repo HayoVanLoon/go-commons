@@ -1,6 +1,10 @@
 package sorted
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+)
 
 type StringSet interface {
 	Add(string) StringSet
@@ -116,6 +120,10 @@ func (ss *stringList) Slice() []string {
 	dst := make([]string, len(ss.data))
 	copy(dst, ss.data)
 	return dst
+}
+
+func (ss *stringList) String() string {
+	return fmt.Sprintf("{%v}", strings.Join(ss.data, ","))
 }
 
 func (ss *stringList) Get(i int) string {
