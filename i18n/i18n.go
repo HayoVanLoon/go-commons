@@ -24,3 +24,12 @@ func IsQuestionMark(c rune) bool {
 	}
 	return false
 }
+
+func IsExclamationMark(c rune) bool {
+	for _, q := range [4]rune{'!', 'ǃ', '՜', '！'} {
+		if q == c {
+			return true
+		}
+	}
+	return false
+}
