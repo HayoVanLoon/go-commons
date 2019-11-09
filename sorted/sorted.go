@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Hayo van Loon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package sorted
 
 import (
@@ -6,6 +22,7 @@ import (
 	"strings"
 )
 
+// Practice type, nothing too serious
 type StringSet interface {
 	Add(string) StringSet
 	Has(string) bool
@@ -18,6 +35,7 @@ type StringSet interface {
 	Slice() []string
 }
 
+// Practice type, nothing too serious
 type StringList interface {
 	Insert(string) StringList
 	Has(string) bool
@@ -36,54 +54,54 @@ type StringList interface {
 // Also implements the set through an extra flag.
 // Performs all operations in O(log n).
 type stringList struct {
-	data []string
+	data         []string
 	noDuplicates bool
 }
 
 func NewStringSet() StringSet {
-	return &stringList{make([]string, 0, 10), true}
+	return &stringList{[]string{}, true}
 }
 
 func NewStringList() StringList {
-	return &stringList{make([]string, 0, 10), false}
+	return &stringList{[]string{}, false}
 }
 
-func (ss *stringList) add(s string) interface{} {
-	if len(ss.data) == 0 {
-		ss.data = append(ss.data, s)
-		return ss
+func (sl *stringList) add(s string) interface{} {
+	if len(sl.data) == 0 {
+		sl.data = append(sl.data, s)
+		return sl
 	}
 
-	lower, upper := 0, len(ss.data)
-	for ; lower != upper; {
-		i := lower + rand.Intn(upper - lower)
-		if s < ss.data[i] {
+	lower, upper := 0, len(sl.data)
+	for lower != upper {
+		i := lower + rand.Intn(upper-lower)
+		if s < sl.data[i] {
 			upper = i
-		} else if s > ss.data[i] {
+		} else if s > sl.data[i] {
 			lower = i + 1
 		} else {
-			if ss.noDuplicates {
-				return ss
+			if sl.noDuplicates {
+				return sl
 			} else {
 				break
 			}
 		}
 	}
 
-	ss.data = append(ss.data, ss.data[0])
-	copy(ss.data[lower+1:], ss.data[lower:])
-	ss.data[lower] = s
+	sl.data = append(sl.data, sl.data[0])
+	copy(sl.data[lower+1:], sl.data[lower:])
+	sl.data[lower] = s
 
-	return ss
+	return sl
 }
 
-func (ss *stringList) Has(s string) bool{
-	lower, upper := 0, len(ss.data)
-	for ; lower != upper; {
-		i := lower + rand.Intn(upper - lower)
-		if s < ss.data[i] {
+func (sl *stringList) Has(s string) bool {
+	lower, upper := 0, len(sl.data)
+	for lower != upper {
+		i := lower + rand.Intn(upper-lower)
+		if s < sl.data[i] {
 			upper = i
-		} else if s > ss.data[i] {
+		} else if s > sl.data[i] {
 			lower = i + 1
 		} else {
 			return true
@@ -92,66 +110,66 @@ func (ss *stringList) Has(s string) bool{
 	return false
 }
 
-func (ss *stringList) remove(s string) interface{} {
-	if len(ss.data) == 0 {
-		return ss
+func (sl *stringList) remove(s string) interface{} {
+	if len(sl.data) == 0 {
+		return sl
 	}
 
-	lower, upper := 0, len(ss.data)
-	for ; lower != upper; {
-		i := lower + rand.Intn(upper - lower)
-		if s < ss.data[i] {
+	lower, upper := 0, len(sl.data)
+	for lower != upper {
+		i := lower + rand.Intn(upper-lower)
+		if s < sl.data[i] {
 			upper = i
-		} else if s > ss.data[i] {
+		} else if s > sl.data[i] {
 			lower = i + 1
 		} else {
-			copy(ss.data[i:], ss.data[i+1:])
-			ss.data[len(ss.data)-1] = ""
-			ss.data = ss.data[:len(ss.data)-1]
-			return ss
+			copy(sl.data[i:], sl.data[i+1:])
+			sl.data[len(sl.data)-1] = ""
+			sl.data = sl.data[:len(sl.data)-1]
+			return sl
 		}
 	}
 
-	return ss
+	return sl
 }
 
-func (ss *stringList) Size() int {
-	return len(ss.data)
+func (sl *stringList) Size() int {
+	return len(sl.data)
 }
 
-func (ss *stringList) Slice() []string {
-	dst := make([]string, len(ss.data))
-	copy(dst, ss.data)
+func (sl *stringList) Slice() []string {
+	dst := make([]string, len(sl.data))
+	copy(dst, sl.data)
 	return dst
 }
 
-func (ss *stringList) Get(i int) string {
+func (sl *stringList) Get(i int) string {
 	if i < 0 {
 		panic("index < 0")
 	}
-	if i >= ss.Size() {
+	if i >= sl.Size() {
 		panic("index past end of list")
 	}
 
-	return ss.data[i]
+	return sl.data[i]
 }
 
-func (ss *stringList) String() string {
-	return fmt.Sprintf("{%v}", strings.Join(ss.data, ","))
+func (sl *stringList) String() string {
+	return fmt.Sprintf("{%v}", strings.Join(sl.data, ","))
 }
 
-func (ss *stringList) Insert(s string) StringList {
-	return ss.add(s).(StringList)
+func (sl *stringList) Insert(s string) StringList {
+	return sl.add(s).(StringList)
 }
 
-func (ss *stringList) Delete(s string) StringList {
-	return ss.remove(s).(StringList)
+func (sl *stringList) Delete(s string) StringList {
+	return sl.remove(s).(StringList)
 }
 
-func (ss *stringList) Add(s string) StringSet {
-	return ss.add(s).(StringSet)
+func (sl *stringList) Add(s string) StringSet {
+	return sl.add(s).(StringSet)
 }
 
-func (ss *stringList) Remove(s string) StringSet {
-	return ss.remove(s).(StringSet)
+func (sl *stringList) Remove(s string) StringSet {
+	return sl.remove(s).(StringSet)
 }
