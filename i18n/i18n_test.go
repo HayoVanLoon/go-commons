@@ -51,7 +51,7 @@ func TestIsExclamationMark(t *testing.T) {
 		{'！', true},
 	}
 	for _, c := range cases {
-		if IsQuestionMark(c.input) != c.expected {
+		if IsExclamationMark(c.input) != c.expected {
 			t.Errorf("failed for %s (expected: %v)", string(c.input), c.expected)
 		}
 	}
