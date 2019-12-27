@@ -46,3 +46,11 @@ func ToCartesian(r, arc float64) (x float64, y float64) {
 func Pyth(x, y float64) float64 {
 	return math.Sqrt(x*x + y*y)
 }
+
+// Tests if floats 'a' and 'b' are within a distance of 'd' of another.
+//
+// Due to the nature of floats, value 'd' must be carefully chosen per
+// situation.
+func Diff(a, b, d float64) bool {
+	return math.Abs(a-b) < math.Abs(d)
+}

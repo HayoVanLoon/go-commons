@@ -48,14 +48,6 @@ func TestRound(t *testing.T) {
 	}
 }
 
-func eucl(x, y float64) float64 {
-	return math.Sqrt(x*x + y*y)
-}
-
-func diff(a, b, d float64) bool {
-	return b < a-d || a+d < b
-}
-
 func TestToCartesian(t *testing.T) {
 	cases := []struct {
 		msg string
@@ -66,19 +58,19 @@ func TestToCartesian(t *testing.T) {
 	}{
 		{"Origin", 0, 0, 0, 0},
 		{"0", 10, 0, 10, 0},
-		{"45", eucl(10, 10), math.Pi * .25, 10, 10},
+		{"45", Pyth(10, 10), math.Pi * .25, 10, 10},
 		{"90", 10, math.Pi * .5, 0, 10},
-		{"135", eucl(10, 10), math.Pi * .75, -10, 10},
+		{"135", Pyth(10, 10), math.Pi * .75, -10, 10},
 		{"180", 10, math.Pi, -10, 0},
-		{"225", eucl(10, 10), math.Pi * 1.25, -10, -10},
+		{"225", Pyth(10, 10), math.Pi * 1.25, -10, -10},
 		{"270", 10, math.Pi * 1.5, 0, -10},
-		{"315", eucl(10, 10), math.Pi * 1.75, 10, -10},
+		{"315", Pyth(10, 10), math.Pi * 1.75, 10, -10},
 		{"360", 10, math.Pi * 2, 10, 0},
 	}
 
 	for i, c := range cases {
 		// rather hefty rounding errors, chose big margin: 10 vs 9.899
-		if x, y := ToCartesian(c.r, c.arc); diff(x, c.x, .2) || diff(y, c.y, .2) {
+		if x, y := ToCartesian(c.r, c.arc); Diff(x, c.x, .2) || Diff(y, c.y, .2) {
 			t.Errorf("case %v: %s (expected: (%v,%v), got: (%v,%v))", i, c.msg, c.x, c.y, x, y)
 		}
 	}
@@ -94,17 +86,17 @@ func TestToPolar(t *testing.T) {
 	}{
 		{"Origin", 0, 0, 0, 0},
 		{"0", 10, 0, 10, 0},
-		{"45", 10, 10, eucl(10, 10), math.Pi * .25},
+		{"45", 10, 10, Pyth(10, 10), math.Pi * .25},
 		{"90", 0, 10, 10, math.Pi * .5},
-		{"135", -10, 10, eucl(10, 10), math.Pi * .75},
+		{"135", -10, 10, Pyth(10, 10), math.Pi * .75},
 		{"180", -10, 0, 10, math.Pi},
-		{"225", -10, -10, eucl(10, 10), -math.Pi * .75},
+		{"225", -10, -10, Pyth(10, 10), -math.Pi * .75},
 		{"270", 0, -10, 10, -math.Pi * .5},
-		{"315", 10, -10, eucl(10, 10), -math.Pi * .25},
+		{"315", 10, -10, Pyth(10, 10), -math.Pi * .25},
 	}
 	for i, c := range cases {
 		// rather hefty rounding errors, chose big margin
-		if r, arc := ToPolar(c.x, c.y); diff(r, c.r, .2) || diff(arc, c.arc, .2) {
+		if r, arc := ToPolar(c.x, c.y); Diff(r, c.r, .2) || Diff(arc, c.arc, .2) {
 			t.Errorf("case %v: %s (expected: (%v,%v), got: (%v,%v))", i, c.msg, c.r, c.arc, r, arc)
 		}
 	}
@@ -124,8 +116,31 @@ func TestPyth(t *testing.T) {
 		{"edge case", 0, 2, 2},
 	}
 	for i, c := range cases {
-		if z := Pyth(c.x, c.y); diff(z, c.z, .01) {
+		if z := Pyth(c.x, c.y); Diff(z, c.z, .01) {
 			t.Errorf("case %v: %s (expected: %v, got: %v)", i, c.msg, c.z, z)
+		}
+	}
+}
+
+func TestDiff(t *testing.T) {
+	cases := []struct {
+		msg string
+		a   float64
+		b   float64
+		d   float64
+		o   bool
+	}{
+		{"", 1.1, 1, .2, true},
+		{"", 1.1, 1, .05, false},
+		{"", 1.1, 1, .1, false},
+		{"", 1.1, 1, -.2, true},
+		{"", 1.1, 1, -.05, false},
+		{"", 0, 1, 2, true},
+		{"", -1.1, 1, .1, false},
+	}
+	for i, c := range cases {
+		if o := Diff(c.a, c.b, c.d); o != c.o {
+			t.Errorf("case %v: %s (expected: %v, got: %v)", i, c.msg, c.o, o)
 		}
 	}
 }
