@@ -14,6 +14,8 @@
  * limitations under the License.
  *
  */
+
+// Small extensions on the math package
 package mathext
 
 import "math"
@@ -26,18 +28,21 @@ func Round(f float64) int {
 	}
 }
 
+// Translates a cartesian coordinate into a polar coordinate.
 func ToPolar(x, y float64) (r float64, arc float64) {
 	r = math.Sqrt(x*x + y*y)
 	arc = math.Atan2(y, x)
 	return
 }
 
+// Translates a polar coordinate into a cartesian coordinate.
 func ToCartesian(r, arc float64) (x float64, y float64) {
 	x = r * math.Cos(arc)
 	y = r * math.Sin(arc)
 	return
 }
 
-func Eucl(x, y float64) float64 {
+// Calculates the hypothenuse from the two other sides of a right triangle.
+func Pyth(x, y float64) float64 {
 	return math.Sqrt(x*x + y*y)
 }
