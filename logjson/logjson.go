@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hayo van Loon
+ * Copyright 2020 Hayo van Loon
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
