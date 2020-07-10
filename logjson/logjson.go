@@ -87,10 +87,18 @@ var toSeverity = map[string]Severity{
 	"EMERGENCY": LevelEmergency,
 }
 
+var toName = func() map[Severity]string {
+	m := map[Severity]string{}
+	for k := range toSeverity {
+		m[toSeverity[k]] = k
+	}
+	return m
+}()
+
 type logger struct {
-	level     Severity
 	projectId string
 	component string
+	level     Severity
 }
 
 func getLogLevel() Severity {
@@ -102,7 +110,23 @@ func getLogLevel() Severity {
 	return LevelDebug
 }
 
-var instance Logger = &logger{level: getLogLevel()}
+func NewDefaultLogger(project, component string) Logger {
+	return &logger{
+		projectId: project,
+		component: component,
+		level:     getLogLevel(),
+	}
+}
+
+func NewLogger(project, component string, sev Severity) Logger {
+	return &logger{
+		projectId: project,
+		component: component,
+		level:     sev,
+	}
+}
+
+var instance Logger = NewDefaultLogger("", "")
 
 // Based on https://github.com/GoogleCloudPlatform/golang-samples/blob/master/run/logging-manual/main.go
 type entry struct {
@@ -122,7 +146,7 @@ func (e entry) String() string {
 
 func (l logger) log(v interface{}, sev Severity, trace string) {
 	// TODO: check if message can be nested or if we need to add extra fields
-	e := entry{Severity: string(sev)}
+	e := entry{Severity: toName[sev]}
 
 	_, err := json.Marshal(v)
 	if err != nil {
