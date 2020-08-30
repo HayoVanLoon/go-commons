@@ -131,7 +131,7 @@ var instance Logger = NewDefaultLogger("", "")
 // Based on https://github.com/GoogleCloudPlatform/golang-samples/blob/master/run/logging-manual/main.go
 type entry struct {
 	Message  interface{} `json:"message"`
-	Severity string      `json:"severity"`
+	Severity string      `json:"severity,omitempty"`
 	Trace    string      `json:"logging.googleapis.com/trace,omitempty"` // TODO decide whether or not to implement it
 	// Stackdriver Log Viewer allows filtering and display of this as `jsonPayload.component`.
 	Component string `json:"component,omitempty"`
@@ -162,10 +162,9 @@ func (l logger) log(v interface{}, sev Severity, trace string) {
 		e.Component = l.component
 	}
 
-	if sev < LevelCritical {
-		log.Println(e)
-	} else {
-		log.Fatalln(e)
+	fmt.Println(e)
+	if sev >= LevelCritical {
+		log.Fatal("critical error, shutting down")
 	}
 }
 
