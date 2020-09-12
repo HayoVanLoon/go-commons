@@ -195,81 +195,81 @@ func (l *logger) SetLevel(sev Severity) {
 }
 
 func (l logger) Debug(v ...interface{}) {
-	l.log(LevelDebug, "", v)
+	l.log(LevelDebug, "", v...)
 }
 
 func (l logger) Info(v ...interface{}) {
-	l.log(LevelInfo, "", v)
+	l.log(LevelInfo, "", v...)
 }
 
 func (l logger) Notice(v ...interface{}) {
-	l.log(LevelNotice, "", v)
+	l.log(LevelNotice, "", v...)
 }
 
 func (l logger) Warn(v ...interface{}) {
-	l.log(LevelWarning, "", v)
+	l.log(LevelWarning, "", v...)
 }
 
 func (l logger) Error(v ...interface{}) {
-	l.log(LevelError, "", v)
+	l.log(LevelError, "", v...)
 }
 
 func (l logger) Critical(v ...interface{}) {
-	l.log(LevelCritical, "", v)
+	l.log(LevelCritical, "", v...)
 }
 
 func (l logger) Alert(v ...interface{}) {
-	l.log(LevelAlert, "", v)
+	l.log(LevelAlert, "", v...)
 }
 
 func (l logger) Emergency(v ...interface{}) {
-	l.log(LevelEmergency, "", v)
+	l.log(LevelEmergency, "", v...)
 }
 
 // Logs a message on DEBUG level.
 // If multiple arguments are passed, the first one should be format string.
 func Debug(v ...interface{}) {
-	instance.Debug(v)
+	instance.Debug(v...)
 }
 
 // Logs a message on INFO level.
 // See Debug for argument rules.
 func Info(v ...interface{}) {
-	instance.Info(v)
+	instance.Info(v...)
 }
 
 // Logs a message on NOTICE level.
 // See Debug for argument rules.
 func Notice(v ...interface{}) {
-	instance.Notice(v)
+	instance.Notice(v...)
 }
 
 // Logs a message on WARN level.
 // See Debug for argument rules.
 func Warn(v ...interface{}) {
-	instance.Warn(v)
+	instance.Warn(v...)
 }
 
 // Logs a message on ERROR level.
 // See Debug for argument rules.
 func Error(v ...interface{}) {
-	instance.Error(v)
+	instance.Error(v...)
 }
 
 // Logs a message on CRITICAL level and exits application (like log.Fatal).
 // See Debug for argument rules.
 func Critical(v ...interface{}) {
-	instance.Critical(v)
+	instance.Critical(v...)
 }
 
 // Logs a message on ALERT level and exits application (like log.Fatal).
 // See Debug for argument rules.
 func Alert(v ...interface{}) {
-	instance.Alert(v)
+	instance.Alert(v...)
 }
 
 // Logs a message on EMERGENCY level and exits application (like log.Fatal).
 // See Debug for argument rules.
 func Emergency(v ...interface{}) {
-	instance.Emergency(v)
+	instance.Emergency(v...)
 }
