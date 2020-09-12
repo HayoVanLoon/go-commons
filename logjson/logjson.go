@@ -46,21 +46,29 @@ type Logger interface {
 	// Sets the minimum severity level reported
 	SetLevel(sev Severity)
 	// Logs a message on DEBUG level.
-	Debug(v interface{})
+	// If multiple arguments are passed, the first one should be format string.
+	Debug(v ...interface{})
 	// Logs a message on INFO level.
-	Info(v interface{})
+	// See Debug for argument rules.
+	Info(v ...interface{})
 	// Logs a message on NOTICE level.
-	Notice(v interface{})
+	// See Debug for argument rules.
+	Notice(v ...interface{})
 	// Logs a message on WARN level.
-	Warn(v interface{})
+	// See Debug for argument rules.
+	Warn(v ...interface{})
 	// Logs a message on ERROR level.
-	Error(v interface{})
+	// See Debug for argument rules.
+	Error(v ...interface{})
 	// Logs a message on CRITICAL level and exits application (like log.Fatal).
-	Critical(v interface{})
+	// See Debug for argument rules.
+	Critical(v ...interface{})
 	// Logs a message on ALERT level and exits application (like log.Fatal).
-	Alert(v interface{})
+	// See Debug for argument rules.
+	Alert(v ...interface{})
 	// Logs a message on EMERGENCY level and exits application (like log.Fatal).
-	Emergency(v interface{})
+	// See Debug for argument rules.
+	Emergency(v ...interface{})
 }
 
 type Severity int
@@ -144,15 +152,25 @@ func (e entry) String() string {
 	return string(out)
 }
 
-func (l logger) log(v interface{}, sev Severity, trace string) {
-	// TODO: check if message can be nested or if we need to add extra fields
+func (l logger) log(sev Severity, trace string, v ...interface{}) {
+	// TODO(hvl): check if message can be nested or if we need to add extra fields
 	e := entry{Severity: toName[sev]}
+	if len(v) == 0 {
+		e.Message = "(no message)"
+		fmt.Println(e)
+		return
+	}
 
-	_, err := json.Marshal(v)
-	if err != nil {
-		e.Message = fmt.Sprintf("%v", v)
-	} else {
-		e.Message = v
+	switch x := v[0].(type) {
+	case string:
+		e.Message = fmt.Sprintf(x, v[1:]...)
+	default:
+		_, err := json.Marshal(v[0])
+		if err != nil {
+			e.Message = fmt.Sprintf("%v", v[0])
+		} else {
+			e.Message = v[0]
+		}
 	}
 
 	if trace != "" {
@@ -176,66 +194,82 @@ func (l *logger) SetLevel(sev Severity) {
 	l.level = sev
 }
 
-func (l logger) Debug(v interface{}) {
-	l.log(v, LevelDebug, "")
+func (l logger) Debug(v ...interface{}) {
+	l.log(LevelDebug, "", v)
 }
 
-func (l logger) Info(v interface{}) {
-	l.log(v, LevelInfo, "")
+func (l logger) Info(v ...interface{}) {
+	l.log(LevelInfo, "", v)
 }
 
-func (l logger) Notice(v interface{}) {
-	l.log(v, LevelNotice, "")
+func (l logger) Notice(v ...interface{}) {
+	l.log(LevelNotice, "", v)
 }
 
-func (l logger) Warn(v interface{}) {
-	l.log(v, LevelWarning, "")
+func (l logger) Warn(v ...interface{}) {
+	l.log(LevelWarning, "", v)
 }
 
-func (l logger) Error(v interface{}) {
-	l.log(v, LevelError, "")
+func (l logger) Error(v ...interface{}) {
+	l.log(LevelError, "", v)
 }
 
-func (l logger) Critical(v interface{}) {
-	l.log(v, LevelCritical, "")
+func (l logger) Critical(v ...interface{}) {
+	l.log(LevelCritical, "", v)
 }
 
-func (l logger) Alert(v interface{}) {
-	l.log(v, LevelAlert, "")
+func (l logger) Alert(v ...interface{}) {
+	l.log(LevelAlert, "", v)
 }
 
-func (l logger) Emergency(v interface{}) {
-	l.log(v, LevelEmergency, "")
+func (l logger) Emergency(v ...interface{}) {
+	l.log(LevelEmergency, "", v)
 }
 
-func Debug(v interface{}) {
+// Logs a message on DEBUG level.
+// If multiple arguments are passed, the first one should be format string.
+func Debug(v ...interface{}) {
 	instance.Debug(v)
 }
 
-func Info(v interface{}) {
+// Logs a message on INFO level.
+// See Debug for argument rules.
+func Info(v ...interface{}) {
 	instance.Info(v)
 }
 
-func Notice(v interface{}) {
+// Logs a message on NOTICE level.
+// See Debug for argument rules.
+func Notice(v ...interface{}) {
 	instance.Notice(v)
 }
 
-func Warn(v interface{}) {
+// Logs a message on WARN level.
+// See Debug for argument rules.
+func Warn(v ...interface{}) {
 	instance.Warn(v)
 }
 
-func Error(v interface{}) {
+// Logs a message on ERROR level.
+// See Debug for argument rules.
+func Error(v ...interface{}) {
 	instance.Error(v)
 }
 
-func Critical(v interface{}) {
+// Logs a message on CRITICAL level and exits application (like log.Fatal).
+// See Debug for argument rules.
+func Critical(v ...interface{}) {
 	instance.Critical(v)
 }
 
-func Alert(v interface{}) {
+// Logs a message on ALERT level and exits application (like log.Fatal).
+// See Debug for argument rules.
+func Alert(v ...interface{}) {
 	instance.Alert(v)
 }
 
-func Emergency(v interface{}) {
+// Logs a message on EMERGENCY level and exits application (like log.Fatal).
+// See Debug for argument rules.
+func Emergency(v ...interface{}) {
 	instance.Emergency(v)
 }
