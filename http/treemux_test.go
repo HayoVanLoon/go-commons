@@ -1,4 +1,4 @@
-package treemux
+package http
 
 import (
 	"io/ioutil"
@@ -36,7 +36,7 @@ func TestTreeMux_Handle(t *testing.T) {
 		{"/foo/bla", 404, ""},
 		{"/moo", 200, "foo!bar!"},
 		{"/moo/", 200, "/moo/!"},
-		{"/moo/meh", 200, "/moo/meh/!"},
+		{"/moo/meh", 200, "/moo/meh!"},
 	}
 	for i, c := range cases {
 		resp, err := s.Client().Get(s.URL + c.path)

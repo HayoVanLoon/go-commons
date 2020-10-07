@@ -1,14 +1,9 @@
-package treemux
+package http
 
 import (
 	"fmt"
 	"strings"
 )
-
-type WildcardTrie interface {
-	Add(string, string, interface{})
-	Get(string, string) (interface{}, bool)
-}
 
 type wildcardTrie struct {
 	k        string
@@ -16,7 +11,7 @@ type wildcardTrie struct {
 	children []wildcardTrie
 }
 
-func NewWildcardTrie() WildcardTrie {
+func newWildcardTrie() *wildcardTrie {
 	return &wildcardTrie{k: ""}
 }
 

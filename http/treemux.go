@@ -1,4 +1,4 @@
-package treemux
+package http
 
 import "net/http"
 
@@ -9,7 +9,7 @@ type TreeMux interface {
 }
 
 type treeMux struct {
-	trie     WildcardTrie
+	trie     *wildcardTrie
 	notFound http.HandlerFunc
 }
 
@@ -40,7 +40,7 @@ func NewTreeMux(notFound http.HandlerFunc) TreeMux {
 		notFound = http.NotFound
 	}
 	return &treeMux{
-		trie:     NewWildcardTrie(),
+		trie:     newWildcardTrie(),
 		notFound: notFound,
 	}
 }
