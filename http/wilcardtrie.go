@@ -15,6 +15,18 @@ func newWildcardTrie() *wildcardTrie {
 	return &wildcardTrie{k: ""}
 }
 
+// Breaks up a string using the specified separator and adds the data to the
+// trie. When a path already exists in the trie, the old data is overwritten.
+//
+// The first element is always expected to be empty. Therefore following
+// statements are idempotent.
+//   trie.Add("/foo/bar", "/", 1)
+//   trie.Add("foo/bar", "/", 1)
+//
+// The wildcard is a flexible, retrieval-time parameter. It plays no role
+// whatsoever at construction-time. One could even apply different wildcard
+// schemes for different purposes on the same trie.
+// See Get for more details on wildcard behaviour.
 func (t *wildcardTrie) Add(s, sep string, v interface{}) {
 	xs := strings.Split(s, sep)
 	if xs[0] == "" {
@@ -46,22 +58,33 @@ func (t *wildcardTrie) grow(idx int, xs []string, v interface{}) {
 	}
 }
 
+// Attempts to retrieve the data from the specified path, split up by the
+// specified separator using the default wildcard "*".
+//
+// Wildcard elements hold no special status over other elements. When, due to a
+// wildcard, a path has two valid end points, the one inserted earliest wins.
 func (t *wildcardTrie) Get(s, sep string) (interface{}, bool) {
+	return t.GetWithWildcard(s, sep, "*")
+}
+
+// Attempts to retrieve the data from the specified path, split up by the
+// specified separator using the specified wildcard.
+func (t *wildcardTrie) GetWithWildcard(s, sep, wildcard string) (interface{}, bool) {
 	// TODO(hvl): input validation
 	xs := strings.Split(s, sep)
 	if xs[0] == "" {
-		return t.get(0, xs)
+		return t.get(0, xs, wildcard)
 	}
 	for _, c := range t.children {
-		if v, found := c.get(0, xs); found {
+		if v, found := c.get(0, xs, wildcard); found {
 			return v, found
 		}
 	}
 	return nil, false
 }
 
-func (t *wildcardTrie) get(idx int, xs []string) (interface{}, bool) {
-	if xs[idx] != t.k && t.k != "*" {
+func (t *wildcardTrie) get(idx int, xs []string, wildcard string) (interface{}, bool) {
+	if xs[idx] != t.k && t.k != wildcard {
 		if t.k == "" && len(t.children) == 0 {
 			return t.v, true
 		}
@@ -71,7 +94,7 @@ func (t *wildcardTrie) get(idx int, xs []string) (interface{}, bool) {
 		return t.v, true
 	}
 	for _, c := range t.children {
-		if v, found := c.get(idx+1, xs); found {
+		if v, found := c.get(idx+1, xs, wildcard); found {
 			return v, found
 		}
 	}
