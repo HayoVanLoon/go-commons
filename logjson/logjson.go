@@ -38,6 +38,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 type Logger interface {
@@ -272,4 +273,15 @@ func Alert(v ...interface{}) {
 // See Debug for argument rules.
 func Emergency(v ...interface{}) {
 	instance.Emergency(v...)
+}
+
+// Used in defer statements, logs a panic and exits program after a delay.
+// In some environments the runtime environment can be killed before the log
+// message has been safely stored.
+func DelayPanicExit() {
+	if r := recover(); r != nil {
+		Error(r)
+		time.Sleep(5 * time.Second)
+		os.Exit(1)
+	}
 }
